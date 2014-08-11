@@ -9,18 +9,19 @@
 #include <unistd.h>
 #include <errno.h>
 #include <arpa/inet.h>
+#include <sys/stat.h>
 
-#define PATH_APP        /home/joseluis/PUJTesis/LocalPort/
-#define FILES_FOLDER    PATH_APP filesClient/
-#define STRINGS_FILE    FILES_FOLDER tablasString.txt
-#define FRMWR_FILE      FILES_FOLDER EMBEDDED
-#define T2_FILE1        FILES_FOLDER T2_F1_C14.jpg
-#define T2_FILE2        FILES_FOLDER T2_F1_C15.jpg
-#define T2_FILE3        FILES_FOLDER T2_F1_C16.jpg
-#define T3_FILE1        FILES_FOLDER T3_F1_C15.jpg
-#define T3_FILE2        FILES_FOLDER T3_F1_C16.jpg
-#define T3_FILE3        FILES_FOLDER T3_F1_C17.jpg
-#define T3_HUELLA1      FILES_FOLDER T3_huella_I1.jpg
+#define PATH_APP        "/home/joseluis/PUJTesis/LocalPort/"
+#define FILES_FOLDER    PATH_APP "filesClient/"
+#define STRINGS_FILE    FILES_FOLDER "tablasString.txt"
+#define FRMWR_FILE      FILES_FOLDER "EMBEDDED"
+#define T2_FILE1        FILES_FOLDER "T2_F1_C14.jpg"
+#define T2_FILE2        FILES_FOLDER "T2_F1_C15.jpg"
+#define T2_FILE3        FILES_FOLDER "T2_F1_C16.jpg"
+#define T3_FILE1        FILES_FOLDER "T3_F1_C15.jpg"
+#define T3_FILE2        FILES_FOLDER "T3_F1_C16.jpg"
+#define T3_FILE3        FILES_FOLDER "T3_F1_C17.jpg"
+#define T3_HUELLA1      FILES_FOLDER "T3_huella_I1"
 
 
 
@@ -228,6 +229,12 @@ int main(int argc, char *argv[]){
             printf("Operacion cancelada\n");
             exit(EXIT_FAILURE);
         }
+        //  T3_huella
+        if( !fileExist(T3_HUELLA1) ){
+            printf("T3_FILE3 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
     }else{
         printf("Error, campo tabla 3 no valido");    
     }
@@ -242,6 +249,13 @@ int main(int argc, char *argv[]){
     if( *(strControl+16)=='5' || *(strControl+16)=='_' ){
         printf("Campo Tabla 5 valido\n");
         flagTablas.hayTabla5 = 1;
+        //  STRINGS_FILE 
+        if( !fileExist(STRINGS_FILE) ){
+            printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
+
     }else{
         printf("Error, campo tabla 5 no valido");    
     }
@@ -263,7 +277,14 @@ int main(int argc, char *argv[]){
         char contDriversIndex = 1;
         do{
             printf("Enter the index to modify [%d/%d]: ",contDriversIndex,drivers); fflush(stdout);
-            scanf("%1s",strControl);
+            scanf("%2s",strControl);
+            // Limite de numeros a ingresar
+            if( atoi(strControl) >0 && atoi(strControl)<11 ){
+                flagTablas.indexTabla4 = 1;
+                printf("drivers a registrar:[%d]\n",drivers);
+            }else{
+                printf("mal numero drivers\n"); exit(1);
+            }            
             flagDrivers[contDriversIndex] = atoi(strControl);
             contDriversIndex++;
         }
@@ -272,18 +293,59 @@ int main(int argc, char *argv[]){
         for(i=1;i<=drivers;i++)
             printf("[%d]",flagDrivers[i]);
         printf("\n");
+        //Revision de existencia archivos tabla 4
+        char fileNameTempArray[50];
+        char pathFiles[100];
+        for(contDriversIndex=1;contDriversIndex<=drivers;contDriversIndex++){
+            
+            strcpy(pathFiles,FILES_FOLDER);
+            sprintf( fileNameTempArray,"T4_F%d_C16.jpg",flagDrivers[contDriversIndex] );
+            strcat(pathFiles,fileNameTempArray);
+            printf("table4[%s]-driver#[%d]\n",fileNameTempArray,flagDrivers[contDriversIndex]);
+            if( !fileExist(pathFiles) ){
+                printf("[%s] No encontrado, revisar que se encuentre en [%s]\n",fileNameTempArray,FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+           
+            strcpy(pathFiles,FILES_FOLDER);
+            sprintf( fileNameTempArray,"T4_F%d_C17.jpg",flagDrivers[contDriversIndex] );
+            strcat(pathFiles,fileNameTempArray);
+            printf("table4[%s]-driver#[%d]\n",fileNameTempArray,flagDrivers[contDriversIndex]);
+            if( !fileExist(pathFiles) ){
+                printf("[%s] No encontrado, revisar que se encuentre en [%s]\n",fileNameTempArray,FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+
+            strcpy(pathFiles,FILES_FOLDER);
+            sprintf( fileNameTempArray,"T4_F%d_C18.jpg",flagDrivers[contDriversIndex] );
+            strcat(pathFiles,fileNameTempArray);
+            printf("table4[%s]-driver#[%d]\n",fileNameTempArray,flagDrivers[contDriversIndex]);
+            if( !fileExist(pathFiles) ){
+                printf("[%s] No encontrado, revisar que se encuentre en [%s]\n",fileNameTempArray,FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+            
+            strcpy(pathFiles,FILES_FOLDER);
+            sprintf( fileNameTempArray,"T4_huella_I%d",flagDrivers[contDriversIndex] );
+            strcat(pathFiles,fileNameTempArray);
+            printf("table4[%s]-driver#[%d]\n",fileNameTempArray,flagDrivers[contDriversIndex]);
+            if( !fileExist(pathFiles) ){
+                printf("[%s] No encontrado, revisar que se encuentre en [%s]\n",fileNameTempArray,FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+
+        }
     }
 
     //END  4. Recolección de la información a cargar
     
     //5. Recolección de la información a cargar
-        // PATH_BASH_CONFIG_SHOT
-    if( !fileExist(PATH_BASH_CONFIG_SHOT) ){
-        printf("BASH_FILE_RUNNING_SYSTEM No encontrado, revisar que se encuentre en [%s]\n",WORKING_PATH);
-        printf("Operacion cancelada\n");
-        exit(EXIT_FAILURE);
-    }
-    
+
+
     // END, 5. Recolección de la información a cargar
 
     while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0){
