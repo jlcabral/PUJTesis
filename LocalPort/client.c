@@ -28,7 +28,7 @@ tablasString flagTablas;
 //Funcion existencia de archivos
 int fileExist(char *filename){
     struct stat buffer;
-    return ( stat(filename, &buffer) == 0 );
+    return ( stat(filename, &buffer) == 0);
 };
 
 int main(int argc, char *argv[]){
