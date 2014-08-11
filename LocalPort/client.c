@@ -10,6 +10,20 @@
 #include <errno.h>
 #include <arpa/inet.h>
 
+#define PATH_APP        /home/joseluis/PUJTesis/LocalPort/
+#define FILES_FOLDER    PATH_APP filesClient/
+#define STRINGS_FILE    FILES_FOLDER tablasString.txt
+#define FRMWR_FILE      FILES_FOLDER EMBEDDED
+#define T2_FILE1        FILES_FOLDER T2_F1_C14.jpg
+#define T2_FILE2        FILES_FOLDER T2_F1_C15.jpg
+#define T2_FILE3        FILES_FOLDER T2_F1_C16.jpg
+#define T3_FILE1        FILES_FOLDER T3_F1_C15.jpg
+#define T3_FILE2        FILES_FOLDER T3_F1_C16.jpg
+#define T3_FILE3        FILES_FOLDER T3_F1_C17.jpg
+#define T3_HUELLA1      FILES_FOLDER T3_huella_I1.jpg
+
+
+
 typedef struct tablasString tablasString; 
 struct tablasString{
     char hay110;
@@ -111,6 +125,12 @@ int main(int argc, char *argv[]){
     if( *(strControl+4)=='F' || *(strControl+4)=='_' ){
         if(*(strControl+4)=='F'){
             flagTablas.hayFirmware = 1;
+            //  FRMWR_FILE 
+            if( !fileExist(FRMWR_FILE) ){
+                printf("FRMWR_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
         }else{
             flagTablas.hayFirmware = 0; 
         }        
@@ -140,6 +160,12 @@ int main(int argc, char *argv[]){
     if( *(strControl+8)=='1' || *(strControl+8)=='_' ){
         printf("Campo Tabla 1 valido\n");
         flagTablas.hayTabla1 = 1;
+        //  STRINGS_FILE 
+        if( !fileExist(STRINGS_FILE) ){
+            printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
     }else{
         printf("Error, campo tabla 1 no valido");    
     }
@@ -147,13 +173,61 @@ int main(int argc, char *argv[]){
     if( *(strControl+10)=='2' || *(strControl+10)=='_' ){
         printf("Campo Tabla 2 valido\n");
         flagTablas.hayTabla2 = 1;
+        //  STRINGS_FILE 
+        if( !fileExist(STRINGS_FILE) ){
+            printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
+        //  T2_FILE1 
+        if( !fileExist(T2_FILE1) ){
+            printf("T2_FILE1 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
+        //  T2_FILE2 
+        if( !fileExist(T2_FILE2) ){
+            printf("T2_FILE2 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
+        //  T2_FILE3 
+        if( !fileExist(T2_FILE3) ){
+            printf("T2_FILE3 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
     }else{
         printf("Error, campo tabla 2 no valido");    
     }
     // Hay tabla 3
     if( *(strControl+12)=='3' || *(strControl+12)=='_' ){
         printf("Campo Tabla 3 valido\n");
-        flagTablas.hayTabla2 = 1;
+        flagTablas.hayTabla3 = 1;
+        //  STRINGS_FILE 
+        if( !fileExist(STRINGS_FILE) ){
+            printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
+        //  T3_FILE1 
+        if( !fileExist(T3_FILE1) ){
+            printf("T3_FILE1 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
+        //  T3_FILE2 
+        if( !fileExist(T3_FILE2) ){
+            printf("T3_FILE2 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
+        //  T3_FILE3 
+        if( !fileExist(T3_FILE3) ){
+            printf("T3_FILE3 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+            printf("Operacion cancelada\n");
+            exit(EXIT_FAILURE);
+        }
     }else{
         printf("Error, campo tabla 3 no valido");    
     }
