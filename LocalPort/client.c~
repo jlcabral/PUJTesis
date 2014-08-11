@@ -29,7 +29,7 @@ tablasString flagTablas;
 int fileExist(char *filename){
     struct stat buffer;
     return ( stat(filename, &buffer) == 0 );
-};
+}
 
 int main(int argc, char *argv[]){
     int sockfd = 0, n = 0;
