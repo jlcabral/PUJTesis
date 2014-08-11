@@ -30,7 +30,7 @@ int fileExist(char *filename){
     struct stat buffer;
     return ( stat(filename, &buffer) == 0);
 };
-
+//comentario de prueba
 int main(int argc, char *argv[]){
     int sockfd = 0, n = 0;
     char recvBuff[1024];
