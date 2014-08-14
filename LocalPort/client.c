@@ -22,8 +22,29 @@
 #define T3_FILE2        FILES_FOLDER "T3_F1_C16.jpg"
 #define T3_FILE3        FILES_FOLDER "T3_F1_C17.jpg"
 #define T3_HUELLA1      FILES_FOLDER "T3_huella_I1"
-
-
+#define STRINGS_TO_TRANSFER  STRINGS_FILE " " 
+#define T2_TO_TRANSFER  T2_FILE1 T2_FILE2 T2_FILE3 " "
+#define T3_TO_TRANSFER  T3_FILE1 T3_FILE2 T3_FILE3 T3_HUELLA1 " "
+#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F1_C15.jpg " FILES_FOLDER "T4_F1_C16.jpg " FILES_FOLDER "T4_F1_C17.jpg " \
+                            FILES_FOLDER "T4_F1_C18.jpg " FILES_FOLDER "T4_huella_I1 " 
+#define T4_TO_TRANSFER_I2   FILES_FOLDER "T4_F2_C15.jpg " FILES_FOLDER "T4_F2_C16.jpg " FILES_FOLDER "T4_F2_C17.jpg " \
+                            FILES_FOLDER "T4_F2_C18.jpg " FILES_FOLDER "T4_huella_I2 "
+#define T4_TO_TRANSFER_I3   FILES_FOLDER "T4_F3_C15.jpg " FILES_FOLDER "T4_F3_C16.jpg " FILES_FOLDER "T4_F3_C17.jpg "\
+                            FILES_FOLDER "T4_F3_C18.jpg " FILES_FOLDER "T4_huella_I3 "
+#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F4_C15.jpg " FILES_FOLDER "T4_F4_C16.jpg " FILES_FOLDER "T4_F4_C17.jpg "\
+                            FILES_FOLDER "T4_F4_C18.jpg " FILES_FOLDER "T4_huella_I4 "
+#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F5_C15.jpg " FILES_FOLDER "T4_F5_C16.jpg " FILES_FOLDER "T4_F5_C17.jpg "\
+                            FILES_FOLDER "T4_F5_C18.jpg " FILES_FOLDER "T4_huella_I5 "
+#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F6_C15.jpg " FILES_FOLDER "T4_F6_C16.jpg " FILES_FOLDER "T4_F6_C17.jpg "\
+                            FILES_FOLDER "T4_F6_C18.jpg " FILES_FOLDER "T4_huella_I6 "
+#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F7_C15.jpg " FILES_FOLDER "T4_F7_C16.jpg " FILES_FOLDER "T4_F7_C17.jpg "\
+                            FILES_FOLDER "T4_F7_C18.jpg " FILES_FOLDER "T4_huella_I7 "
+#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F8_C15.jpg " FILES_FOLDER "T4_F8_C16.jpg " FILES_FOLDER "T4_F8_C17.jpg "\
+                            FILES_FOLDER "T4_F8_C18.jpg " FILES_FOLDER "T4_huella_I8 "
+#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F9_C15.jpg " FILES_FOLDER "T4_F9_C16.jpg " FILES_FOLDER "T4_F9_C17.jpg "\
+                            FILES_FOLDER "T4_F9_C18.jpg " FILES_FOLDER "T4_huella_I9 "
+#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F10_C15.jpg " FILES_FOLDER "T4_F10_C16.jpg " FILES_FOLDER "T4_F10_C17.jpg "\
+                            FILES_FOLDER "T4_F10_C18.jpg " FILES_FOLDER "T4_huella_I10 "
 
 typedef struct tablasString tablasString; 
 struct tablasString{
@@ -337,17 +358,31 @@ int main(int argc, char *argv[]){
                 printf("Operacion cancelada\n");
                 exit(EXIT_FAILURE);
             }
-
         }
     }
 
     //END  4. Recolección de la información a cargar
     
-    //5. Recolección de la información a cargar
+    //5. Transferencia de la informacion 
+    char sshCommandTransferFilesArray[400];
+    password = getpass("Enter Identifier linux password: ");
+    printf("pass:[%s]\n",password);
 
+    strcpy(sshCommandTransferFilesArray,"sshpass -p ");
+    strcat(sshCommandTransferFilesArray,password);
+    strcat(sshCommandTransferFilesArray," scp ");
+    if(flagTablas.hayTabla1 | flagTablas.hayTabla5){
+        strcat(sshCommandTransferFilesArray,STRINGS_TO_TRANSFER);
+    }
+    if(flagTablas.hayTabla2){
+        strcat(sshCommandTransferFilesArray,T2_TO_TRANSFER);
+    }
+    if(flagTablas.hayTabla3){
+        strcat(sshCommandTransferFilesArray,T3_TO_TRANSFER);
+    }
 
     // END, 5. Recolección de la información a cargar
-
+     
     while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0){
         recvBuff[n] = 0;
         if(fputs(recvBuff, stdout) == EOF){
