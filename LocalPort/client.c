@@ -363,9 +363,9 @@ int main(int argc, char *argv[]){
 
     //END  4. Recolección de la información a cargar
     
-    //5. Transferencia de la informacion 
+    //5. Transferencia de la informacion
     char sshCommandTransferFilesArray[400];
-    password = getpass("Enter Identifier linux password: ");
+    password = getpass("Enter Identifier Device linux password: ");
     printf("pass:[%s]\n",password);
 
     strcpy(sshCommandTransferFilesArray,"sshpass -p ");
@@ -380,8 +380,36 @@ int main(int argc, char *argv[]){
     if(flagTablas.hayTabla3){
         strcat(sshCommandTransferFilesArray,T3_TO_TRANSFER);
     }
-
-    // END, 5. Recolección de la información a cargar
+    if(flagTablas.hayTabla4){
+        // loop
+        for(contDriversIndex=1;contDriversIndex<=drivers;contDriversIndex++){
+            if( flagDrivers[contDriversIndex]== 1){
+                strcat(sshCommandTransferFilesArray,T4_TO_TRANSFER_I1);
+            }else 
+                if( flagDrivers[contDriversIndex]== 2){
+                    strcat(sshCommandTransferFilesArray,T4_TO_TRANSFER_I2);
+                }else if( flagDrivers[contDriversIndex]== 3){
+                            strcat(sshCommandTransferFilesArray,T4_TO_TRANSFER_I3);
+                        }else if( flagDrivers[contDriversIndex]== 4){
+                                    strcat(sshCommandTransferFilesArray,T4_TO_TRANSFER_I4);
+                                }else if( flagDrivers[contDriversIndex]== 5){
+                                            strcat(sshCommandTransferFilesArray,T4_TO_TRANSFER_I5);
+                                        }else if( flagDrivers[contDriversIndex]== 6){
+                                                    strcat(sshCommandTransferFilesArray,T4_TO_TRANSFER_I6);
+                                                }else if( flagDrivers[contDriversIndex]== 7){
+                                                            strcat(sshCommandTransferFilesArray,T4_TO_TRANSFER_I7);
+                                                        }else if( flagDrivers[contDriversIndex]== 8){
+                                                                    strcat(sshCommandTransferFilesArray,T4_TO_TRANSFER_I8);
+                                                                }else if( flagDrivers[contDriversIndex]== 9){
+                                                                            strcat(sshCommandTransferFilesArray,T4_TO_TRANSFER_I9);
+                                                                        }else if( flagDrivers[contDriversIndex]== 10){
+                                                                                    strcat(sshCommandTransferFilesArray,T4_TO_TRANSFER_I10);
+                                                                        }
+        } // end for
+    }
+        // Ejecución del comando
+    system(sshCommandTransferFilesArray);
+    // END 5. Transferencia de la informacion
      
     while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0){
         recvBuff[n] = 0;
