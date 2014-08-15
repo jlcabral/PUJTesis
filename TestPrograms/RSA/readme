@@ -1,0 +1,19 @@
+
+ 2017  openssl genrsa -out privatekey.pem 1024
+ 2018  ls
+ 2019  openssl rsa -in privatekey.pem -pubout
+ 2020  openssl rsa -in privatekey.pem -pubout > publickey.pub
+ 2021  ls
+ 2022  cat publickey.pub 
+ 2023  echo "too many secrets" > file.txt
+ 2024  echo file.txt 
+ 2025  cat file.txt 
+ 2026  reset
+ 2027  ls
+ 2028  openssl rsautl -encrypt -inkey publickey.pub -pubin -in file.txt -out file.ssl
+ 2029  cat file.ssl 
+ 2030  xxd file.ssl 
+ 2031  openssl rsautl -decrypt -inkey privatekey.pem -in file.ssl -out decrypted.txt
+ 2032  cat decrypted.txt 
+
+https://www.openssl.org/docs/crypto/rsa.html#
