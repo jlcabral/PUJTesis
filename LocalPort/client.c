@@ -31,19 +31,19 @@
                             FILES_FOLDER "T4_F2_C18.jpg " FILES_FOLDER "T4_huella_I2 "
 #define T4_TO_TRANSFER_I3   FILES_FOLDER "T4_F3_C15.jpg " FILES_FOLDER "T4_F3_C16.jpg " FILES_FOLDER "T4_F3_C17.jpg "\
                             FILES_FOLDER "T4_F3_C18.jpg " FILES_FOLDER "T4_huella_I3 "
-#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F4_C15.jpg " FILES_FOLDER "T4_F4_C16.jpg " FILES_FOLDER "T4_F4_C17.jpg "\
+#define T4_TO_TRANSFER_I4   FILES_FOLDER "T4_F4_C15.jpg " FILES_FOLDER "T4_F4_C16.jpg " FILES_FOLDER "T4_F4_C17.jpg "\
                             FILES_FOLDER "T4_F4_C18.jpg " FILES_FOLDER "T4_huella_I4 "
-#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F5_C15.jpg " FILES_FOLDER "T4_F5_C16.jpg " FILES_FOLDER "T4_F5_C17.jpg "\
+#define T4_TO_TRANSFER_I5   FILES_FOLDER "T4_F5_C15.jpg " FILES_FOLDER "T4_F5_C16.jpg " FILES_FOLDER "T4_F5_C17.jpg "\
                             FILES_FOLDER "T4_F5_C18.jpg " FILES_FOLDER "T4_huella_I5 "
-#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F6_C15.jpg " FILES_FOLDER "T4_F6_C16.jpg " FILES_FOLDER "T4_F6_C17.jpg "\
+#define T4_TO_TRANSFER_I6   FILES_FOLDER "T4_F6_C15.jpg " FILES_FOLDER "T4_F6_C16.jpg " FILES_FOLDER "T4_F6_C17.jpg "\
                             FILES_FOLDER "T4_F6_C18.jpg " FILES_FOLDER "T4_huella_I6 "
-#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F7_C15.jpg " FILES_FOLDER "T4_F7_C16.jpg " FILES_FOLDER "T4_F7_C17.jpg "\
+#define T4_TO_TRANSFER_I7   FILES_FOLDER "T4_F7_C15.jpg " FILES_FOLDER "T4_F7_C16.jpg " FILES_FOLDER "T4_F7_C17.jpg "\
                             FILES_FOLDER "T4_F7_C18.jpg " FILES_FOLDER "T4_huella_I7 "
-#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F8_C15.jpg " FILES_FOLDER "T4_F8_C16.jpg " FILES_FOLDER "T4_F8_C17.jpg "\
+#define T4_TO_TRANSFER_I8   FILES_FOLDER "T4_F8_C15.jpg " FILES_FOLDER "T4_F8_C16.jpg " FILES_FOLDER "T4_F8_C17.jpg "\
                             FILES_FOLDER "T4_F8_C18.jpg " FILES_FOLDER "T4_huella_I8 "
-#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F9_C15.jpg " FILES_FOLDER "T4_F9_C16.jpg " FILES_FOLDER "T4_F9_C17.jpg "\
+#define T4_TO_TRANSFER_I9   FILES_FOLDER "T4_F9_C15.jpg " FILES_FOLDER "T4_F9_C16.jpg " FILES_FOLDER "T4_F9_C17.jpg "\
                             FILES_FOLDER "T4_F9_C18.jpg " FILES_FOLDER "T4_huella_I9 "
-#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F10_C15.jpg " FILES_FOLDER "T4_F10_C16.jpg " FILES_FOLDER "T4_F10_C17.jpg "\
+#define T4_TO_TRANSFER_I10  FILES_FOLDER "T4_F10_C15.jpg " FILES_FOLDER "T4_F10_C16.jpg " FILES_FOLDER "T4_F10_C17.jpg "\
                             FILES_FOLDER "T4_F10_C18.jpg " FILES_FOLDER "T4_huella_I10 "
 
 typedef struct tablasString tablasString; 
@@ -66,6 +66,11 @@ int fileExist(char *filename){
     struct stat buffer;
     return ( stat(filename, &buffer) == 0);
 };
+//Variables para trabajo actualizacion tablas
+int drivers = 0;
+char contDriversIndex = 1;
+char flagDrivers[11];
+
 //comentario de prueba
 int main(int argc, char *argv[]){
     int sockfd = 0, n = 0;
@@ -119,6 +124,11 @@ int main(int argc, char *argv[]){
         printf("%02x", outMD5[hashIndex]);
     
     printf("\n");
+    if(strncmp(outMD5,"4dfd1f83ab93dddf6ee678c2b4eeedd0",32)){ //keyword embebidos
+        printf("password ok\n");
+    }else{
+        printf("password error, the app will close\n");    
+    }
     // END 3. HASH del password
     
     // 4. Recolección de la información a cargar
@@ -284,7 +294,7 @@ int main(int argc, char *argv[]){
     if( flagTablas.hayTabla4 == 1 ){
         printf("Ingresar el numero de conductores: "); fflush(stdout);
         scanf("%2s",strControl);
-        int drivers = 0;
+        //int drivers = 0;
         drivers = atoi(strControl);
         // Ingreso del número de conductores
         if( drivers>0 && drivers<11 ){
@@ -294,8 +304,8 @@ int main(int argc, char *argv[]){
             printf("mal numero drivers\n"); exit(1);
         }
         // Ingreso index de los conductores
-        char flagDrivers[11];
-        char contDriversIndex = 1;
+        //char flagDrivers[11];
+        //char contDriversIndex = 1;
         do{
             printf("Enter the index to modify [%d/%d]: ",contDriversIndex,drivers); fflush(stdout);
             scanf("%2s",strControl);
