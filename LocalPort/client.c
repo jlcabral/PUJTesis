@@ -394,7 +394,7 @@ int main(int argc, char *argv[]){
        read(sockfd,bufferClient,255); // <== read
        printf("2. after read client\n");
        switch(statusSwClient){
-        case RECEIVE_RANDOM_ID:{
+        case RECEIVE_RANDOM_ID:{ // 2.
             long *pLongBufferClient = 0;
             pLongBufferClient = (long *)(bufferClient);
             randomID = *pLongBufferClient;

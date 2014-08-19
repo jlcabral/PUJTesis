@@ -57,7 +57,7 @@ int main(int argc, char *argv[]){
                 canRead = TRUE;    
             }
             switch(statusSwServer){
-                case ENVIO_RANDOM_ID:{
+                case ENVIO_RANDOM_ID:{ // 1.
                     srand( time(NULL) );
                     randomID = rand() % 16777215;
                     printf("randomID from server:[%li]\n",randomID);
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]){
                     statusSwServer = RECEIVE_PC_CODE;
                     break;
                 }
-                case RECEIVE_PC_CODE:{
+                case RECEIVE_PC_CODE:{ // 3.
                     char * pch;
                     char cont = 0;
                     long randomIDTemp = 0;
