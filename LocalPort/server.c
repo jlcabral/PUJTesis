@@ -12,13 +12,15 @@
 #define TRUE    1
 #define FALSE   0
 //Variables used in authentication section
+#define CLIENT_CODE "CLIENT"
 #define SERVER_CODE "SERVER"
     // Servers status
 #define ENVIO_RANDOM_ID 0
+#define RECEIVE_PC_CODE 1
     // Variables used
 unsigned char bufferRx[255];
 unsigned char statusSwServer = ENVIO_RANDOM_ID;
-
+unsigned char ClientCode[10];
 
 int main(int argc, char *argv[]){
     int listenfd = 0, connfd = 0;
@@ -60,8 +62,54 @@ int main(int argc, char *argv[]){
                     randomID = rand() % 16777215;
                     printf("randomID from server:[%li]\n",randomID);
                     write(connfd,&randomID,3);
+                    statusSwServer = RECEIVE_PC_CODE;
                     break;
                 }
+                case RECEIVE_PC_CODE:{
+                    char * pch;
+                    char cont = 0;
+                    long randomIDTemp = 0;
+                    printf ("Splitting string \"%s\" into tokens:\n",bufferRx);
+                    pch = strtok (bufferRx,"$");
+                    while (pch != NULL){
+                        printf ("%s\n",pch);
+                        switch(cont){
+                            case 0:{
+                                strcpy(ClientCode,pch);
+                                break;
+                            }
+                            case 1:{
+                                randomIDTemp = atoi(pch);
+                                break;
+                            }
+                            case 2:{
+                                randomPC = atoi(pch);
+                                break;
+                            }
+                            default:{
+                                printf("RECEIVE_PC_CODE SWITCH: It shouldn't be here\n");
+                            }
+                        }
+                        cont++;
+                        pch = strtok (NULL,"$");
+                    }
+                    // Validacion de la información llegada.                        
+                    if( strstr(CLIENT_CODE,ClientCode) != NULL ){
+                        printf("Ok server client code\n");
+                    }else{
+                        printf("ClientCode no OK :(\n");
+                    }
+                    if( randomIDTemp != randomID ){
+                        printf("Ok server randomID\n");
+                    }else{
+                        printf("randomID no OK :(\n");
+                    }
+                    break;
+                    
+                    sprintf(bufferRx,"%s$%i$%i",SERVER_CODE,randomID,randomPC); 
+                    write(connfd,bufferRx,strlen(bufferRx));
+                    //statusSwServer =
+                } 
                 default:{
                     printf("Default server fsm: It shouldn't be here\n");
                 }

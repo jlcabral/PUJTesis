@@ -51,11 +51,14 @@
 
 //Variables used in authentication section
 #define CLIENT_CODE     "CLIENT"
+#define SERVER_CODE     "SERVER"
     // client status
 #define RECEIVE_RANDOM_ID   0
+#define RECEIVE_SERVER_CODE 1
     //Variables used
 unsigned char bufferClient[255];
 unsigned char statusSwClient = RECEIVE_RANDOM_ID;
+unsigned char ServerCode[10];
 
 typedef struct tablasString tablasString; 
 struct tablasString{
@@ -396,12 +399,53 @@ int main(int argc, char *argv[]){
             pLongBufferClient = (long *)(bufferClient);
             randomID = *pLongBufferClient;
             printf("[%li]\n",randomID);
-            //generate random PC
+            //generate random PC, sending PC_CODE
             srand( time(NULL) );
             randomPC = rand() % 16777215;
             sprintf(bufferClient,"%s$%i$%i",CLIENT_CODE,randomID,randomPC); 
             write(sockfd,bufferClient,strlen(bufferClient));
             break;
+        }
+        case RECEIVE_SERVER_CODE:{
+            char * pch;
+            char cont = 0;
+            long randomPCTemp = 0;
+            printf ("Splitting string \"%s\" into tokens:\n",bufferClient);
+            pch = strtok (bufferClient,"$");
+            while (pch != NULL){
+                printf ("%s\n",pch);
+                switch(cont){
+                    case 0:{
+                        strcpy(PCCode,pch);
+                        break;
+                    }
+                    case 1:{
+                        randomIDTemp = atoi(pch);
+                        break;
+                    }
+                    case 2:{
+                        randomPCTemp = atoi(pch);
+                        break;
+                    }
+                    default:{
+                        printf("RECEIVE_PC_CODE SWITCH: It shouldn't be here\n");
+                    }
+                }
+                cont++;
+                pch = strtok (NULL,"$");
+            }
+            // Validacion de la información llegada.                        
+            if( strstr(SERVER_CODE,ServerCode) != NULL ){
+                printf("Ok server client code\n");
+            }else{
+                printf("ClientCode no OK :(\n");
+            }
+            if( randomIDTemp != randomID ){
+                printf("Ok server randomID\n");
+            }else{
+                printf("randomID no OK :(\n");
+            } 
+            break;                         
         }
         default:{
             printf("Default client fsm: It shouldn't be here\n");
