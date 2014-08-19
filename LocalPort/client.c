@@ -10,8 +10,11 @@
 #include <errno.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
+#include <time.h>
 
-#define PATH_APP        "/home/joseluis/PUJTesis/LocalPort/"
+#define TRUE            1
+#define FALSE           0
+#define PATH_APP        "/home/jlcabral/gitRepo/LocalPort/"
 #define FILES_FOLDER    PATH_APP "filesClient/"
 #define STRINGS_FILE    FILES_FOLDER "tablasString.txt"
 #define FRMWR_FILE      FILES_FOLDER "EMBEDDED"
@@ -46,6 +49,14 @@
 #define T4_TO_TRANSFER_I10  FILES_FOLDER "T4_F10_C15.jpg " FILES_FOLDER "T4_F10_C16.jpg " FILES_FOLDER "T4_F10_C17.jpg "\
                             FILES_FOLDER "T4_F10_C18.jpg " FILES_FOLDER "T4_huella_I10 "
 
+//Variables used in authentication section
+#define CLIENT_CODE     "CLIENT"
+    // client status
+#define RECEIVE_RANDOM_ID   0
+    //Variables used
+unsigned char bufferClient[255];
+unsigned char statusSwClient = RECEIVE_RANDOM_ID;
+
 typedef struct tablasString tablasString; 
 struct tablasString{
     char hay110;
@@ -60,7 +71,8 @@ struct tablasString{
 };
 
 tablasString flagTablas;
-
+long randomPC=0;
+long randomID=0;
 //Funcion existencia de archivos
 int fileExist(char *filename){
     struct stat buffer;
@@ -100,7 +112,7 @@ int main(int argc, char *argv[]){
     if( connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0){
        printf("\n Error : Connect Socket Failed \n");
        return 1;
-    } 
+    }
     // END 1. ESTABLECIMIENTO DE CONEXION POR SOCKETS
     
     // 2. OBTENER EL PASSWORD
@@ -372,6 +384,33 @@ int main(int argc, char *argv[]){
     }
 
     //END  4. Recolección de la información a cargar
+    
+    // Authentication State
+    do{
+       printf("1. before read client\n");
+       read(sockfd,bufferClient,255); // <== read
+       printf("2. after read client\n");
+       switch(statusSwClient){
+        case RECEIVE_RANDOM_ID:{
+            long *pLongBufferClient = 0;
+            pLongBufferClient = (long *)(bufferClient);
+            randomID = *pLongBufferClient;
+            printf("[%li]\n",randomID);
+            //generate random PC
+            srand( time(NULL) );
+            randomPC = rand() % 16777215;
+            sprintf(bufferClient,"%s$%i$%i",CLIENT_CODE,randomID,randomPC); 
+            write(sockfd,bufferClient,strlen(bufferClient));
+            break;
+        }
+        default:{
+            printf("Default client fsm: It shouldn't be here\n");
+            break;
+        }
+       }
+    }while(1);
+
+    // END Authentication State
     
     //5. Transferencia de la informacion
     char sshCommandTransferFilesArray[400];
