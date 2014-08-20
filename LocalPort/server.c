@@ -45,19 +45,23 @@ int main(int argc, char *argv[]){
     listen(listenfd, 10); 
     
     char canRead = 0;
-
+    unsigned char ContinueFSMDoWhile = TRUE;
     while(1){
         connfd = accept(listenfd, (struct sockaddr*)NULL, NULL);
+        ContinueFSMDoWhile = TRUE;
         printf("conexion aceptada :)\n");
         // Identifier server FSM
         do{
             if(canRead){
+                printf("Before read server\n");
                 read(connfd,bufferRx,255); // <== read
+                printf("After read server:[%s]\n",bufferRx);
             }else{
                 canRead = TRUE;    
             }
             switch(statusSwServer){
                 case ENVIO_RANDOM_ID:{ // 1.
+                    printf("CASE 1\n"); fflush(stdout);
                     srand( time(NULL) );
                     randomID = rand() % 16777215;
                     printf("randomID from server:[%li]\n",randomID);
@@ -69,6 +73,7 @@ int main(int argc, char *argv[]){
                     char * pch;
                     char cont = 0;
                     long randomIDTemp = 0;
+                    printf("CASE 3\n"); fflush(stdout);
                     printf ("Splitting string \"%s\" into tokens:\n",bufferRx);
                     pch = strtok (bufferRx,"$");
                     while (pch != NULL){
@@ -79,11 +84,11 @@ int main(int argc, char *argv[]){
                                 break;
                             }
                             case 1:{
-                                randomIDTemp = atoi(pch);
+                                randomIDTemp = atol(pch);
                                 break;
                             }
                             case 2:{
-                                randomPC = atoi(pch);
+                                randomPC = atol(pch);
                                 break;
                             }
                             default:{
@@ -99,30 +104,24 @@ int main(int argc, char *argv[]){
                     }else{
                         printf("ClientCode no OK :(\n");
                     }
-                    if( randomIDTemp != randomID ){
+                    if( randomIDTemp == randomID ){
                         printf("Ok server randomID\n");
                     }else{
                         printf("randomID no OK :(\n");
                     }
-                    break;
                     
-                    sprintf(bufferRx,"%s$%i$%i",SERVER_CODE,randomID,randomPC); 
+                    sprintf(bufferRx,"%s$%li$%li",SERVER_CODE,randomID,randomPC); 
                     write(connfd,bufferRx,strlen(bufferRx));
-                    //statusSwServer =
+                    ContinueFSMDoWhile = FALSE;
+                    break;
                 } 
                 default:{
                     printf("Default server fsm: It shouldn't be here\n");
                 }
             }
-        }while(1);
-
+        }while(ContinueFSMDoWhile);
 
         // Identifier server FSM
-
-        ticks = time(NULL);
-        snprintf(sendBuff, sizeof(sendBuff), "%.24s\r\n", ctime(&ticks));
-        write(connfd, sendBuff, strlen(sendBuff));
-        close(connfd);
         sleep(1);
      }
 }

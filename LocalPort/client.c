@@ -14,7 +14,7 @@
 
 #define TRUE            1
 #define FALSE           0
-#define PATH_APP        "/home/jlcabral/gitRepo/LocalPort/"
+#define PATH_APP        "/home/joseluis/PUJTesis/LocalPort/"
 #define FILES_FOLDER    PATH_APP "filesClient/"
 #define STRINGS_FILE    FILES_FOLDER "tablasString.txt"
 #define FRMWR_FILE      FILES_FOLDER "EMBEDDED"
@@ -59,6 +59,7 @@
 unsigned char bufferClient[255];
 unsigned char statusSwClient = RECEIVE_RANDOM_ID;
 unsigned char ServerCode[10];
+long randomIDTemp = 0;
 
 typedef struct tablasString tablasString; 
 struct tablasString{
@@ -88,6 +89,7 @@ char flagDrivers[11];
 
 //comentario de prueba
 int main(int argc, char *argv[]){
+    unsigned char ContinueDoWhileClient = TRUE;
     int sockfd = 0, n = 0;
     char recvBuff[1024];
     struct sockaddr_in serv_addr; 
@@ -392,39 +394,43 @@ int main(int argc, char *argv[]){
     do{
        printf("1. before read client\n");
        read(sockfd,bufferClient,255); // <== read
-       printf("2. after read client\n");
+       printf("2. after read client:[%s]\n",bufferClient);
+
        switch(statusSwClient){
         case RECEIVE_RANDOM_ID:{ // 2.
             long *pLongBufferClient = 0;
             pLongBufferClient = (long *)(bufferClient);
+            printf("CASE 2\n"); fflush(stdout);
             randomID = *pLongBufferClient;
             printf("[%li]\n",randomID);
             //generate random PC, sending PC_CODE
             srand( time(NULL) );
             randomPC = rand() % 16777215;
-            sprintf(bufferClient,"%s$%i$%i",CLIENT_CODE,randomID,randomPC); 
+            sprintf(bufferClient,"%s$%li$%li",CLIENT_CODE,randomID,randomPC); 
             write(sockfd,bufferClient,strlen(bufferClient));
+            statusSwClient = RECEIVE_SERVER_CODE;
             break;
         }
-        case RECEIVE_SERVER_CODE:{
+        case RECEIVE_SERVER_CODE:{ // 4.
             char * pch;
             char cont = 0;
             long randomPCTemp = 0;
+            printf("CASE 4\n"); fflush(stdout);
             printf ("Splitting string \"%s\" into tokens:\n",bufferClient);
             pch = strtok (bufferClient,"$");
             while (pch != NULL){
                 printf ("%s\n",pch);
                 switch(cont){
                     case 0:{
-                        strcpy(PCCode,pch);
+                        strcpy(ServerCode,pch);
                         break;
                     }
                     case 1:{
-                        randomIDTemp = atoi(pch);
+                        randomIDTemp = atol(pch);
                         break;
                     }
                     case 2:{
-                        randomPCTemp = atoi(pch);
+                        randomPCTemp = atol(pch);
                         break;
                     }
                     default:{
@@ -440,11 +446,17 @@ int main(int argc, char *argv[]){
             }else{
                 printf("ClientCode no OK :(\n");
             }
-            if( randomIDTemp != randomID ){
+            if( randomIDTemp == randomID ){
                 printf("Ok server randomID\n");
             }else{
                 printf("randomID no OK :(\n");
+            }
+            if( randomPCTemp == randomPC ){
+                printf("Ok server randomPC\n");
+            }else{
+                printf("randomPC no OK :(\n");
             } 
+            ContinueDoWhileClient = FALSE;
             break;                         
         }
         default:{
@@ -452,7 +464,7 @@ int main(int argc, char *argv[]){
             break;
         }
        }
-    }while(1);
+    }while(ContinueDoWhileClient);
 
     // END Authentication State
     
@@ -504,7 +516,7 @@ int main(int argc, char *argv[]){
     system(sshCommandTransferFilesArray);
     // END 5. Transferencia de la informacion
      
-    while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0){
+    /*while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0){
         recvBuff[n] = 0;
         if(fputs(recvBuff, stdout) == EOF){
             printf("\n Error : Fputs error\n");
@@ -512,6 +524,6 @@ int main(int argc, char *argv[]){
     }
     if(n < 0){
         printf("\n Read error \n");
-    }
+    }*/
     return 0;
 }
