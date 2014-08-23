@@ -9,6 +9,9 @@
 #include <sys/types.h>
 #include <time.h> 
 
+    //  Local includes
+#include "../include/rsa.h"
+
 #define TRUE    1
 #define FALSE   0
 //Variables used in authentication section
@@ -17,7 +20,20 @@
     // Servers status
 #define ENVIO_RANDOM_ID 0
 #define RECEIVE_PC_CODE 1
-    // Variables used
+    // Defines Encryption
+#define PATH_PRIVATE_KEY_CLIENT     "keys/privateClientKey.pem"
+#define PATH_PUBLIC_KEY_CLIENT      "keys/publicClientKey.pem"
+#define PATH_PRIVATE_KEY_SERVER     "keys/privateServerKey.pem"
+#define PATH_PUBLIC_KEY_SERVER      "keys/publicServerKey.pem"
+    // Variables used for encryption
+char dataBuffer[2048]={};
+unsigned char encryptedClient[2048]={};
+unsigned char decryptedClient[2048]={};
+int encrypted_length = 0;
+int decrypted_length = 0;
+unsigned char encryptedServer[2048]={};
+unsigned char decryptedServer[2048]={};
+    // Variables used in FSM
 char bufferRx[255];
 char statusSwServer = ENVIO_RANDOM_ID;
 char ClientCode[10];
@@ -57,7 +73,7 @@ int main(int argc, char *argv[]){
                 read(connfd,bufferRx,255); // <== read
                 printf("After read server:[%s]\n",bufferRx);
             }else{
-                canRead = TRUE;    
+                canRead = TRUE;
             }
             switch(statusSwServer){
                 case ENVIO_RANDOM_ID:{ // 1.
@@ -65,7 +81,15 @@ int main(int argc, char *argv[]){
                     srand( time(NULL) );
                     randomID = rand() % 16777215;
                     printf("randomID from server:[%li]\n",randomID);
-                    write(connfd,&randomID,3);
+                        // char conversion to encrypt
+                    sprintf(dataBuffer,"%li",randomID); 
+                    int encrypted_length = public_encrypt((unsigned char *)dataBuffer,strlen(dataBuffer),(unsigned char *)(PATH_PUBLIC_KEY_SERVER) ,encryptedServer);
+                    if(encrypted_length == -1){
+                        printLastError("Public Encrypt failed ");
+                        exit(0);
+                    }
+                    printf("Encrypted length = [%d]\n",encrypted_length);
+                    write(connfd,encryptedServer,strlen((char *)(encryptedServer)));
                     statusSwServer = RECEIVE_PC_CODE;
                     break;
                 }

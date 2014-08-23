@@ -12,6 +12,8 @@
 #include <sys/stat.h>
 #include <time.h>
 
+    // Local includes
+#include "../include/rsa.h"
 #define TRUE            1
 #define FALSE           0
 #define PATH_APP        "/home/joseluis/PUJTesis/LocalPort/"
@@ -48,13 +50,25 @@
                             FILES_FOLDER "T4_F9_C18.jpg " FILES_FOLDER "T4_huella_I9 "
 #define T4_TO_TRANSFER_I10  FILES_FOLDER "T4_F10_C15.jpg " FILES_FOLDER "T4_F10_C16.jpg " FILES_FOLDER "T4_F10_C17.jpg "\
                             FILES_FOLDER "T4_F10_C18.jpg " FILES_FOLDER "T4_huella_I10 "
-
+    // Defines Encryption
+#define PATH_PRIVATE_KEY_CLIENT     "keys/privateClientKey.pem"
+#define PATH_PUBLIC_KEY_CLIENT      "keys/publicClientKey.pem"
+#define PATH_PRIVATE_KEY_SERVER     "keys/privateServerKey.pem"
+#define PATH_PUBLIC_KEY_SERVER      "keys/publicServerKey.pem"
 //Variables used in authentication section
 #define CLIENT_CODE     "CLIENT"
 #define SERVER_CODE     "SERVER"
     // client status
 #define RECEIVE_RANDOM_ID   0
 #define RECEIVE_SERVER_CODE 1
+    // Variables used for encryption
+char dataBuffer[2048]={};
+unsigned char encryptedClient[2048]={};
+unsigned char decryptedClient[2048]={};
+int encrypted_length = 0;
+int decrypted_length = 0;
+unsigned char encryptedServer[2048]={};
+unsigned char decryptedServer[2048]={};
     //Variables used
 char bufferClient[255];
 char statusSwClient = RECEIVE_RANDOM_ID;
@@ -398,10 +412,21 @@ int main(int argc, char *argv[]){
 
        switch(statusSwClient){
         case RECEIVE_RANDOM_ID:{ // 2.
-            long *pLongBufferClient = 0;
-            pLongBufferClient = (long *)(bufferClient);
-            printf("CASE 2\n"); fflush(stdout);
-            randomID = *pLongBufferClient;
+            //long *pLongBufferClient = 0;
+            //pLongBufferClient = (long *)(bufferClient);
+
+            // Decrypt info
+            decrypted_length = private_decrypt((unsigned char *)(bufferClient),strlen(bufferClient),(unsigned char *)(PATH_PRIVATE_KEY_SERVER),decryptedServer);
+            if(decrypted_length == -1){
+                printLastError("Private Decrypt failed");
+                exit(0);
+            }
+            printf("Decrypted Text = [%s]\n",decryptedServer);
+            printf("Decrypted Length = [%d]\n",decrypted_length);
+            //
+            printf("CASE 2\n"); fflush(stdout);            
+            //randomID = *pLongBufferClient;
+            randomID = atol(bufferClient);
             printf("[%li]\n",randomID);
             //generate random PC, sending PC_CODE
             srand( time(NULL) );
