@@ -16,7 +16,12 @@
 #include "../include/rsa.h"
 #define TRUE            1
 #define FALSE           0
-#define PATH_APP        "/home/joseluis/PUJTesis/LocalPort/"
+#define AREYOUATHOME    TRUE
+#if AREYOUATHOME  
+    #define PATH_APP        "/home/jlcabral/PUJTesis/LocalPort/"
+#else
+    #define PATH_APP        "/home/joseluis/PUJTesis/LocalPort/"
+#endif
 #define FILES_FOLDER    PATH_APP "filesClient/"
 #define STRINGS_FILE    FILES_FOLDER "tablasString.txt"
 #define FRMWR_FILE      FILES_FOLDER "EMBEDDED"
