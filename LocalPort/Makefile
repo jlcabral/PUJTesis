@@ -2,8 +2,8 @@ CC=gcc
 SRCPATH=source/
 OBJPATH=obj/
 all: client.o server.o rsa.o
-	$(CC) $(OBJPATH)client.o -lcrypto -o client
-	$(CC) $(OBJPATH)server.o -lcrypto -o server
+	$(CC) $(OBJPATH)client.o $(OBJPATH)rsa.o -lcrypto -o client
+	$(CC) $(OBJPATH)server.o $(OBJPATH)rsa.o -lcrypto -o server
 client.o:
 	$(CC) $(SRCPATH)client.c -c -Wall -g -lcrypto -o $(OBJPATH)client.o
 server.o:

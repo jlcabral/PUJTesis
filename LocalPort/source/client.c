@@ -11,12 +11,12 @@
 #include <arpa/inet.h>
 #include <sys/stat.h>
 #include <time.h>
-
+//Ln 175 commented for testing
     // Local includes
 #include "../include/rsa.h"
 #define TRUE            1
 #define FALSE           0
-#define AREYOUATHOME    TRUE
+#define AREYOUATHOME    FALSE
 #if AREYOUATHOME  
     #define PATH_APP        "/home/jlcabral/PUJTesis/LocalPort/"
 #else
@@ -172,7 +172,8 @@ int main(int argc, char *argv[]){
         // 4.1 Ingreso del string de control 
     char strControl[17];
     printf("Enter the control string: "); fflush(stdout);
-    scanf("%17s",strControl);
+    //scanf("%17s",strControl);
+    strcpy(strControl, "110$_$T,1,_,_,_,_");
     printf("The control string written is: [%s]\n",strControl);
         // 4.2 Caracterización del string ingresado (strControl)
     // 110
@@ -413,7 +414,8 @@ int main(int argc, char *argv[]){
     do{
        printf("1. before read client\n");
        read(sockfd,bufferClient,255); // <== read
-       printf("2. after read client:[%s]\n",bufferClient);
+       printf("Client after read client\n");
+       //printf("2. after read client:[%s]\n",bufferClient);
 
        switch(statusSwClient){
         case RECEIVE_RANDOM_ID:{ // 2.
@@ -421,23 +423,31 @@ int main(int argc, char *argv[]){
             //pLongBufferClient = (long *)(bufferClient);
 
             // Decrypt info
-            decrypted_length = private_decrypt((unsigned char *)(bufferClient),strlen(bufferClient),(unsigned char *)(PATH_PRIVATE_KEY_SERVER),decryptedServer);
+            decrypted_length = private_decrypt((unsigned char *)(bufferClient),strlen(bufferClient),(unsigned char *)(PATH_PRIVATE_KEY_CLIENT),decryptedServer);
             if(decrypted_length == -1){
                 printLastError("Private Decrypt failed");
                 exit(0);
             }
-            printf("Decrypted Text = [%s]\n",decryptedServer);
-            printf("Decrypted Length = [%d]\n",decrypted_length);
+            decryptedServer[decrypted_length] = '\0';
+            printf("2. Decrypted Length = [%d]\n",decrypted_length);
+            printf("2. Decrypted Text = [%s]\n",decryptedServer);
             //
-            printf("CASE 2\n"); fflush(stdout);            
+            printf("2. CASE 2\n"); fflush(stdout);            
             //randomID = *pLongBufferClient;
-            randomID = atol(bufferClient);
-            printf("[%li]\n",randomID);
+            randomID = atol((char *)(decryptedServer));
+            printf("2. [%li]\n",randomID);
             //generate random PC, sending PC_CODE
             srand( time(NULL) );
             randomPC = rand() % 16777215;
-            sprintf((char *)(bufferClient),"%s$%li$%li",CLIENT_CODE,randomID,randomPC); 
-            write(sockfd,bufferClient,strlen((char *)(bufferClient)));
+            sprintf((char *)(bufferClient),"%s$%li$%li",CLIENT_CODE,randomID,randomPC);
+
+            encrypted_length = public_encrypt((unsigned char *)bufferClient,strlen(bufferClient),(unsigned char *)(PATH_PUBLIC_KEY_SERVER) ,encryptedClient);
+            if(encrypted_length == -1){
+                printLastError("Public Encrypt failed ");
+                exit(0);
+            }
+
+            printf( "2. written ReceiveRandomID:[%i]\n", (int)( write(sockfd,encryptedClient,encrypted_length) ) );
             statusSwClient = RECEIVE_SERVER_CODE;
             break;
         }
@@ -446,6 +456,14 @@ int main(int argc, char *argv[]){
             char cont = 0;
             long randomPCTemp = 0;
             printf("CASE 4\n"); fflush(stdout);
+
+            decrypted_length = private_decrypt((unsigned char *)(bufferClient),strlen(bufferClient),(unsigned char *)(PATH_PRIVATE_KEY_CLIENT),decryptedClient);
+            if(decrypted_length == -1){
+                printLastError("Private Decrypt failed");
+                exit(0);
+            }
+            strcpy(bufferClient,(char *)(decryptedClient) );
+
             printf ("Splitting string \"%s\" into tokens:\n",bufferClient);
             pch = strtok (bufferClient,"$");
             while (pch != NULL){

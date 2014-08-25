@@ -71,25 +71,26 @@ int main(int argc, char *argv[]){
             if(canRead){
                 printf("Before read server\n");
                 read(connfd,bufferRx,255); // <== read
-                printf("After read server:[%s]\n",bufferRx);
+                printf("server after read\n"); fflush(stdout);
+                //printf("After read server:[%s]\n",bufferRx);
             }else{
                 canRead = TRUE;
             }
             switch(statusSwServer){
                 case ENVIO_RANDOM_ID:{ // 1.
-                    printf("CASE 1\n"); fflush(stdout);
+                    printf("1. CASE 1\n"); fflush(stdout);
                     srand( time(NULL) );
                     randomID = rand() % 16777215;
-                    printf("randomID from server:[%li]\n",randomID);
+                    printf("1. randomID from server:[%li]\n",randomID);
                         // char conversion to encrypt
                     sprintf(dataBuffer,"%li",randomID); 
-                    int encrypted_length = public_encrypt((unsigned char *)dataBuffer,strlen(dataBuffer),(unsigned char *)(PATH_PUBLIC_KEY_SERVER) ,encryptedServer);
+                    int encrypted_length = public_encrypt((unsigned char *)dataBuffer,strlen(dataBuffer),(unsigned char *)(PATH_PUBLIC_KEY_CLIENT) ,encryptedServer);
                     if(encrypted_length == -1){
                         printLastError("Public Encrypt failed ");
                         exit(0);
                     }
-                    printf("Encrypted length = [%d]\n",encrypted_length);
-                    write(connfd,encryptedServer,strlen((char *)(encryptedServer)));
+                    printf("1. Encrypted length = [%d]\n",encrypted_length);
+                    printf("1. written EnvioRandomID:[%i]\n", (int)(write(connfd,encryptedServer,encrypted_length)));
                     statusSwServer = RECEIVE_PC_CODE;
                     break;
                 }
@@ -97,8 +98,20 @@ int main(int argc, char *argv[]){
                     char * pch;
                     char cont = 0;
                     long randomIDTemp = 0;
-                    printf("CASE 3\n"); fflush(stdout);
-                    printf ("Splitting string \"%s\" into tokens:\n",bufferRx);
+                    printf("3. CASE 3\n"); fflush(stdout);
+
+                    // Decrypt info
+                    decrypted_length = private_decrypt((unsigned char *)(bufferRx),strlen(bufferRx),(unsigned char *)(PATH_PRIVATE_KEY_SERVER),decryptedClient);
+                    if(decrypted_length == -1){
+                        printLastError("Private Decrypt failed");
+                        exit(0);
+                    }
+                    decryptedClient[decrypted_length] = '\0';
+                    printf("3. Decrypted Length = [%d]\n",decrypted_length);
+                    printf("3. Decrypted Text = [%s]\n",decryptedClient);
+                    strcpy(bufferRx,(char *)(decryptedClient));
+
+                    printf ("3. Splitting string \"%s\" into tokens:\n",bufferRx);
                     pch = strtok (bufferRx,"$");
                     while (pch != NULL){
                         printf ("%s\n",pch);
@@ -124,18 +137,24 @@ int main(int argc, char *argv[]){
                     }
                     // Validacion de la información llegada.                        
                     if( strstr(CLIENT_CODE,ClientCode) != NULL ){
-                        printf("Ok server client code\n");
+                        printf("3. Ok server client code\n");
                     }else{
-                        printf("ClientCode no OK :(\n");
+                        printf("3. ClientCode no OK :(\n");
                     }
                     if( randomIDTemp == randomID ){
-                        printf("Ok server randomID\n");
+                        printf("3. Ok server randomID\n");
                     }else{
-                        printf("randomID no OK :(\n");
-                    }
+                        printf("3. randomID no OK :(\n");
+                    }                   
+                    sprintf(bufferRx,"%s$%li$%li",SERVER_CODE,randomID,randomPC);
                     
-                    sprintf(bufferRx,"%s$%li$%li",SERVER_CODE,randomID,randomPC); 
-                    write(connfd,bufferRx,strlen(bufferRx));
+                    encrypted_length = public_encrypt((unsigned char *)bufferRx,strlen(bufferRx),(unsigned char *)(PATH_PUBLIC_KEY_CLIENT) ,encryptedServer);
+                    if(encrypted_length == -1){
+                        printLastError("Public Encrypt failed ");
+                        exit(0);
+                    }
+
+                    printf( "3. written ReceivePCCode:[%i]\n", (int)(write(connfd,encryptedServer,encrypted_length)));
                     ContinueFSMDoWhile = FALSE;
                     break;
                 }
@@ -144,7 +163,10 @@ int main(int argc, char *argv[]){
                 }
             }
         }while(ContinueFSMDoWhile);
-
+        printf("End FSM, waiting new connection.\n");
+        ContinueFSMDoWhile = TRUE;
+        canRead = FALSE;
+        statusSwServer = ENVIO_RANDOM_ID;
         // Identifier server FSM
         sleep(1);
      }
