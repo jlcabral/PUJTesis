@@ -16,7 +16,7 @@
 #include "../include/rsa.h"
 #define TRUE            1
 #define FALSE           0
-#define AREYOUATHOME    FALSE
+#define AREYOUATHOME    TRUE
 #if AREYOUATHOME  
     #define PATH_APP        "/home/jlcabral/PUJTesis/LocalPort/"
 #else
@@ -79,6 +79,8 @@ char bufferClient[255];
 char statusSwClient = RECEIVE_RANDOM_ID;
 char ServerCode[10];
 long randomIDTemp = 0;
+    // FSM
+int contWrite = 0 , tempContWrite = 0;
 
 typedef struct tablasString tablasString; 
 struct tablasString{
@@ -421,11 +423,10 @@ int main(int argc, char *argv[]){
         case RECEIVE_RANDOM_ID:{ // 2.
             //long *pLongBufferClient = 0;
             //pLongBufferClient = (long *)(bufferClient);
-
             // Decrypt info
             decrypted_length = private_decrypt((unsigned char *)(bufferClient),strlen(bufferClient),(unsigned char *)(PATH_PRIVATE_KEY_CLIENT),decryptedServer);
             if(decrypted_length == -1){
-                printLastError("Private Decrypt failed");
+                printLastError("Private Decrypt failed\n");
                 exit(0);
             }
             decryptedServer[decrypted_length] = '\0';
@@ -443,11 +444,19 @@ int main(int argc, char *argv[]){
 
             encrypted_length = public_encrypt((unsigned char *)bufferClient,strlen(bufferClient),(unsigned char *)(PATH_PUBLIC_KEY_SERVER) ,encryptedClient);
             if(encrypted_length == -1){
-                printLastError("Public Encrypt failed ");
+                printLastError("2. Public Encrypt failed ");
                 exit(0);
             }
-
-            printf( "2. written ReceiveRandomID:[%i]\n", (int)( write(sockfd,encryptedClient,encrypted_length) ) );
+            contWrite = 0;
+            tempContWrite = 0;
+            do{
+                if( ( tempContWrite = write(sockfd,encryptedClient,encrypted_length)) > 0 ){
+                    contWrite += tempContWrite; 
+                    printf("2. written:[%d]\n",contWrite);
+                }else{
+                    printf("2. Error writting\n");    
+                }
+            }while(contWrite < encrypted_length);
             statusSwClient = RECEIVE_SERVER_CODE;
             break;
         }

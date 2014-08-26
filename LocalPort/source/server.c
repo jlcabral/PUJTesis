@@ -37,6 +37,8 @@ unsigned char decryptedServer[2048]={};
 char bufferRx[255];
 char statusSwServer = ENVIO_RANDOM_ID;
 char ClientCode[10];
+int  contWrite = 0;
+int  tempContWrite = 0;
 
 int main(int argc, char *argv[]){
     int listenfd = 0, connfd = 0;
@@ -86,11 +88,21 @@ int main(int argc, char *argv[]){
                     sprintf(dataBuffer,"%li",randomID); 
                     int encrypted_length = public_encrypt((unsigned char *)dataBuffer,strlen(dataBuffer),(unsigned char *)(PATH_PUBLIC_KEY_CLIENT) ,encryptedServer);
                     if(encrypted_length == -1){
-                        printLastError("Public Encrypt failed ");
+                        printLastError("Public Encrypt failed\n");
                         exit(0);
                     }
                     printf("1. Encrypted length = [%d]\n",encrypted_length);
-                    printf("1. written EnvioRandomID:[%i]\n", (int)(write(connfd,encryptedServer,encrypted_length)));
+                    contWrite = 0;
+                    tempContWrite = 0;
+                    do{
+                        if( (tempContWrite = write(connfd,encryptedServer,encrypted_length)) > 0 ){
+                            contWrite += tempContWrite;
+                            printf("1. written:[%d]\n",contWrite);
+                       }else{
+                            printf("1. Error writting\n");
+                        }
+                    }while(contWrite < encrypted_length);
+
                     statusSwServer = RECEIVE_PC_CODE;
                     break;
                 }
@@ -153,8 +165,17 @@ int main(int argc, char *argv[]){
                         printLastError("Public Encrypt failed ");
                         exit(0);
                     }
+                    contWrite = 0;
+                    tempContWrite = 0;
+                    do{
+                        if( (tempContWrite = write(connfd,encryptedServer,encrypted_length)) > 0 ){
+                            contWrite += tempContWrite;
+                            printf("3. written:[%d]\n",contWrite);
+                        }else{                          
+                            printf("3. Error writting\n");
+                        }
+                    }while(contWrite < encrypted_length);
 
-                    printf( "3. written ReceivePCCode:[%i]\n", (int)(write(connfd,encryptedServer,encrypted_length)));
                     ContinueFSMDoWhile = FALSE;
                     break;
                 }
