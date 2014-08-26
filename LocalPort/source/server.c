@@ -35,6 +35,7 @@ unsigned char encryptedServer[2048]={};
 unsigned char decryptedServer[2048]={};
     // Variables used in FSM
 char bufferRx[255];
+char tempBufferRx[255];
 char statusSwServer = ENVIO_RANDOM_ID;
 char ClientCode[10];
 int  contWrite = 0;
@@ -68,6 +69,7 @@ int main(int argc, char *argv[]){
         connfd = accept(listenfd, (struct sockaddr*)NULL, NULL);
         ContinueFSMDoWhile = TRUE;
         printf("conexion aceptada :)\n");
+        *tempBufferRx = 0;
         // Identifier server FSM
         do{
             if(canRead){
@@ -111,12 +113,20 @@ int main(int argc, char *argv[]){
                     char cont = 0;
                     long randomIDTemp = 0;
                     printf("3. CASE 3\n"); fflush(stdout);
+                        // Buffering
+                    if( strlen(tempBufferRx) == 0 ){
+                        strcpy(tempBufferRx,bufferRx);
+                    }else{
+                        strcat(tempBufferRx, bufferRx);
+                        strcpy(bufferRx, tempBufferRx);
+                    }
 
                     // Decrypt info
                     decrypted_length = private_decrypt((unsigned char *)(bufferRx),strlen(bufferRx),(unsigned char *)(PATH_PRIVATE_KEY_SERVER),decryptedClient);
                     if(decrypted_length == -1){
-                        printLastError("Private Decrypt failed");
-                        exit(0);
+                        printLastError("Private Decrypt failed\n");
+                        //exit(0);
+                        break;
                     }
                     decryptedClient[decrypted_length] = '\0';
                     printf("3. Decrypted Length = [%d]\n",decrypted_length);

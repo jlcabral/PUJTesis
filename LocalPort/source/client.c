@@ -76,6 +76,7 @@ unsigned char encryptedServer[2048]={};
 unsigned char decryptedServer[2048]={};
     //Variables used
 char bufferClient[255];
+char tempBufferClient[255] = {};
 char statusSwClient = RECEIVE_RANDOM_ID;
 char ServerCode[10];
 long randomIDTemp = 0;
@@ -411,7 +412,7 @@ int main(int argc, char *argv[]){
     }
 
     //END  4. Recolección de la información a cargar
-    
+    *tempBufferClient = 0; 
     // Authentication State
     do{
        printf("1. before read client\n");
@@ -424,10 +425,18 @@ int main(int argc, char *argv[]){
             //long *pLongBufferClient = 0;
             //pLongBufferClient = (long *)(bufferClient);
             // Decrypt info
+                // tempBuffer
+            if( strlen(tempBufferClient) == 0 ){
+                strcpy(tempBufferClient,bufferClient);
+            }else{
+                strcat(tempBufferClient, bufferClient);
+                strcpy(bufferClient, tempBufferClient);
+            }
             decrypted_length = private_decrypt((unsigned char *)(bufferClient),strlen(bufferClient),(unsigned char *)(PATH_PRIVATE_KEY_CLIENT),decryptedServer);
             if(decrypted_length == -1){
                 printLastError("Private Decrypt failed\n");
-                exit(0);
+                //exit(0);
+                break;
             }
             decryptedServer[decrypted_length] = '\0';
             printf("2. Decrypted Length = [%d]\n",decrypted_length);
@@ -458,6 +467,7 @@ int main(int argc, char *argv[]){
                 }
             }while(contWrite < encrypted_length);
             statusSwClient = RECEIVE_SERVER_CODE;
+            *tempBufferClient = 0;
             break;
         }
         case RECEIVE_SERVER_CODE:{ // 4.
@@ -465,11 +475,19 @@ int main(int argc, char *argv[]){
             char cont = 0;
             long randomPCTemp = 0;
             printf("CASE 4\n"); fflush(stdout);
+                // Buffering
+            if( strlen(tempBufferClient) == 0 ){
+                strcpy(tempBufferClient,bufferClient);
+            }else{
+                strcat(tempBufferClient, bufferClient);
+                strcpy(bufferClient, tempBufferClient);
+            }
 
             decrypted_length = private_decrypt((unsigned char *)(bufferClient),strlen(bufferClient),(unsigned char *)(PATH_PRIVATE_KEY_CLIENT),decryptedClient);
             if(decrypted_length == -1){
                 printLastError("Private Decrypt failed");
-                exit(0);
+                //exit(0);
+                break;
             }
             strcpy(bufferClient,(char *)(decryptedClient) );
 
