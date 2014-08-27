@@ -16,7 +16,7 @@
 #include "../include/rsa.h"
 #define TRUE            1
 #define FALSE           0
-#define AREYOUATHOME    TRUE
+#define AREYOUATHOME    FALSE
 #if AREYOUATHOME  
     #define PATH_APP        "/home/jlcabral/PUJTesis/LocalPort/"
 #else
@@ -412,12 +412,13 @@ int main(int argc, char *argv[]){
     }
 
     //END  4. Recolección de la información a cargar
-    *tempBufferClient = 0; 
+    *tempBufferClient = 0;
+    int bytesReceived = 0;
     // Authentication State
     do{
-       printf("1. before read client\n");
-       read(sockfd,bufferClient,255); // <== read
-       printf("Client after read client\n");
+       printf("--> Client before read \n");
+       bytesReceived = read(sockfd,bufferClient,255); // <== read
+       printf("--> Client after read, bytesReceived:[%d] \n",bytesReceived);
        //printf("2. after read client:[%s]\n",bufferClient);
 
        switch(statusSwClient){

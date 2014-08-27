@@ -65,6 +65,7 @@ int main(int argc, char *argv[]){
     
     char canRead = 0;
     unsigned char ContinueFSMDoWhile = TRUE;
+    int bytesReceived = 0;
     while(1){
         connfd = accept(listenfd, (struct sockaddr*)NULL, NULL);
         ContinueFSMDoWhile = TRUE;
@@ -74,7 +75,7 @@ int main(int argc, char *argv[]){
         do{
             if(canRead){
                 printf("Before read server\n");
-                read(connfd,bufferRx,255); // <== read
+                bytesReceived = read(connfd,bufferRx,255); // <== read
                 printf("server after read\n"); fflush(stdout);
                 //printf("After read server:[%s]\n",bufferRx);
             }else{
@@ -114,6 +115,7 @@ int main(int argc, char *argv[]){
                     long randomIDTemp = 0;
                     printf("3. CASE 3\n"); fflush(stdout);
                         // Buffering
+                    printf("bytesReceived:[%d]\n",bytesReceived);
                     if( strlen(tempBufferRx) == 0 ){
                         strcpy(tempBufferRx,bufferRx);
                     }else{
