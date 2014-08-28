@@ -124,7 +124,7 @@ int main(int argc, char *argv[]){
                     }
 
                     // Decrypt info
-                    decrypted_length = private_decrypt((unsigned char *)(bufferRx),strlen(bufferRx),(unsigned char *)(PATH_PRIVATE_KEY_SERVER),decryptedClient);
+                    decrypted_length = private_decrypt((unsigned char *)(bufferRx),/*strlen(bufferRx)*/128,(unsigned char *)(PATH_PRIVATE_KEY_SERVER),decryptedClient);
                     if(decrypted_length == -1){
                         printLastError("Private Decrypt failed\n");
                         //exit(0);

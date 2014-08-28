@@ -16,7 +16,7 @@
 #include "../include/rsa.h"
 #define TRUE            1
 #define FALSE           0
-#define AREYOUATHOME    FALSE
+#define AREYOUATHOME    TRUE
 #if AREYOUATHOME  
     #define PATH_APP        "/home/jlcabral/PUJTesis/LocalPort/"
 #else
@@ -433,7 +433,7 @@ int main(int argc, char *argv[]){
                 strcat(tempBufferClient, bufferClient);
                 strcpy(bufferClient, tempBufferClient);
             }
-            decrypted_length = private_decrypt((unsigned char *)(bufferClient),strlen(bufferClient),(unsigned char *)(PATH_PRIVATE_KEY_CLIENT),decryptedServer);
+            decrypted_length = private_decrypt((unsigned char *)(bufferClient),/*strlen(bufferClient)*/128,(unsigned char *)(PATH_PRIVATE_KEY_CLIENT),decryptedServer);
             if(decrypted_length == -1){
                 printLastError("Private Decrypt failed\n");
                 //exit(0);
@@ -484,7 +484,7 @@ int main(int argc, char *argv[]){
                 strcpy(bufferClient, tempBufferClient);
             }
 
-            decrypted_length = private_decrypt((unsigned char *)(bufferClient),strlen(bufferClient),(unsigned char *)(PATH_PRIVATE_KEY_CLIENT),decryptedClient);
+            decrypted_length = private_decrypt((unsigned char *)(bufferClient),/*strlen(bufferClient)*/128,(unsigned char *)(PATH_PRIVATE_KEY_CLIENT),decryptedClient);
             if(decrypted_length == -1){
                 printLastError("Private Decrypt failed");
                 //exit(0);
