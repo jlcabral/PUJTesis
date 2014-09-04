@@ -1,0 +1,11 @@
+[Unit]
+Description=BeagleBone Tester
+ConditionPathExists=/var/lib/bone-tester
+ConditionKernelCommandLine=run_hardware_tests
+
+[Service]
+StandardOutput=syslog
+ExecStart=/var/lib/bone-tester/init-scripts/init.sh
+
+[Install]
+WantedBy=multi-user.target

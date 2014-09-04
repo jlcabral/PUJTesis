@@ -1,0 +1,3 @@
+# of module          name                 type                 compatible
+virtio_mmio          *                    *                    virtio,mmio
+mma8450              *                    *                    fsl,mma8450
