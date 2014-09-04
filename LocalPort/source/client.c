@@ -16,12 +16,13 @@
 #include "../include/rsa.h"
 #define TRUE            1
 #define FALSE           0
-#define AREYOUATHOME    TRUE
+#define AREYOUATHOME    FALSE
 #if AREYOUATHOME  
     #define PATH_APP        "/home/jlcabral/PUJTesis/LocalPort/"
 #else
     #define PATH_APP        "/home/joseluis/PUJTesis/LocalPort/"
 #endif
+#define REMOTE_DESTINATION_FOLDER   " root@192.168.7.2:/home/root/testFromScpFiles/"
 #define FILES_FOLDER    PATH_APP "filesClient/"
 #define STRINGS_FILE    FILES_FOLDER "tablasString.txt"
 #define FRMWR_FILE      FILES_FOLDER "EMBEDDED"
@@ -545,10 +546,10 @@ int main(int argc, char *argv[]){
     // END Authentication State
     
     //5. Transferencia de la informacion
-    char sshCommandTransferFilesArray[400];
+    char sshCommandTransferFilesArray[1000];
     password = getpass("Enter Identifier Device linux password: ");
     printf("pass:[%s]\n",password);
-
+    
     strcpy(sshCommandTransferFilesArray,"sshpass -p ");
     strcat(sshCommandTransferFilesArray,password);
     strcat(sshCommandTransferFilesArray," scp ");
@@ -588,8 +589,11 @@ int main(int argc, char *argv[]){
                                                                         }
         } // end for
     }
+        // Add the destination file
+    strcat(sshCommandTransferFilesArray,REMOTE_DESTINATION_FOLDER);
         // Ejecución del comando
-    system(sshCommandTransferFilesArray);
+    printf("command: \n [%s] -- strlen(%i)\n",sshCommandTransferFilesArray,(int)(strlen(sshCommandTransferFilesArray)));
+    system(sshCommandTransferFilesArray); // <== Don't forget uncomment this line
     // END 5. Transferencia de la informacion
      
     /*while ( (n = read(sockfd, recvBuff, sizeof(recvBuff)-1)) > 0){
