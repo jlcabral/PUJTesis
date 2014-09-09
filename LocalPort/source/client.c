@@ -16,13 +16,13 @@
 #include "../include/rsa.h"
 #define TRUE            1
 #define FALSE           0
-#define AREYOUATHOME    FALSE
+#define AREYOUATHOME    TRUE
 #if AREYOUATHOME  
     #define PATH_APP        "/home/jlcabral/PUJTesis/LocalPort/"
 #else
     #define PATH_APP        "/home/joseluis/PUJTesis/LocalPort/"
 #endif
-#define REMOTE_DESTINATION_FOLDER   " root@192.168.7.2:/home/root/testFromScpFiles/"
+#define REMOTE_DESTINATION_FOLDER   " root@192.168.7.2:/home/root/test/files/"
 #define FILES_FOLDER    PATH_APP "filesClient/"
 #define STRINGS_FILE    FILES_FOLDER "tablasString.txt"
 #define FRMWR_FILE      FILES_FOLDER "EMBEDDED"
@@ -32,10 +32,10 @@
 #define T3_FILE1        FILES_FOLDER "T3_F1_C15.jpg"
 #define T3_FILE2        FILES_FOLDER "T3_F1_C16.jpg"
 #define T3_FILE3        FILES_FOLDER "T3_F1_C17.jpg"
-#define T3_HUELLA1      FILES_FOLDER "T3_huella_I1"
+#define T3_HUELLA1      FILES_FOLDER "T3_huella_I1 "
 #define STRINGS_TO_TRANSFER  STRINGS_FILE " " 
-#define T2_TO_TRANSFER  T2_FILE1 T2_FILE2 T2_FILE3 " "
-#define T3_TO_TRANSFER  T3_FILE1 T3_FILE2 T3_FILE3 T3_HUELLA1 " "
+#define T2_TO_TRANSFER  T2_FILE1 " " T2_FILE2 " " T2_FILE3 " "
+#define T3_TO_TRANSFER  T3_FILE1 " " T3_FILE2 " " T3_FILE3 " " T3_HUELLA1 " "
 #define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F1_C15.jpg " FILES_FOLDER "T4_F1_C16.jpg " FILES_FOLDER "T4_F1_C17.jpg " \
                             FILES_FOLDER "T4_F1_C18.jpg " FILES_FOLDER "T4_huella_I1 " 
 #define T4_TO_TRANSFER_I2   FILES_FOLDER "T4_F2_C15.jpg " FILES_FOLDER "T4_F2_C16.jpg " FILES_FOLDER "T4_F2_C17.jpg " \
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]){
     char strControl[17];
     printf("Enter the control string: "); fflush(stdout);
     //scanf("%17s",strControl);
-    strcpy(strControl, "110$_$T,1,_,_,_,_");
+    strcpy(strControl, "110$_$T,_,_,3,_,_");
     printf("The control string written is: [%s]\n",strControl);
         // 4.2 Caracterización del string ingresado (strControl)
     // 110
@@ -232,12 +232,14 @@ int main(int argc, char *argv[]){
     // Hay tabla 1
     if( *(strControl+8)=='1' || *(strControl+8)=='_' ){
         printf("Campo Tabla 1 valido\n");
-        flagTablas.hayTabla1 = 1;
-        //  STRINGS_FILE 
-        if( !fileExist(STRINGS_FILE) ){
-            printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
-            printf("Operacion cancelada\n");
-            exit(EXIT_FAILURE);
+        if( *(strControl+8)=='1' ){
+            flagTablas.hayTabla1 = 1;
+            //  STRINGS_FILE 
+            if( !fileExist(STRINGS_FILE) ){
+                printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
         }
     }else{
         printf("Error, campo tabla 1 no valido");    
@@ -245,30 +247,32 @@ int main(int argc, char *argv[]){
     // Hay tabla 2
     if( *(strControl+10)=='2' || *(strControl+10)=='_' ){
         printf("Campo Tabla 2 valido\n");
-        flagTablas.hayTabla2 = 1;
-        //  STRINGS_FILE 
-        if( !fileExist(STRINGS_FILE) ){
-            printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
-            printf("Operacion cancelada\n");
-            exit(EXIT_FAILURE);
-        }
-        //  T2_FILE1 
-        if( !fileExist(T2_FILE1) ){
-            printf("T2_FILE1 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
-            printf("Operacion cancelada\n");
-            exit(EXIT_FAILURE);
-        }
-        //  T2_FILE2 
-        if( !fileExist(T2_FILE2) ){
-            printf("T2_FILE2 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
-            printf("Operacion cancelada\n");
-            exit(EXIT_FAILURE);
-        }
-        //  T2_FILE3 
-        if( !fileExist(T2_FILE3) ){
-            printf("T2_FILE3 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
-            printf("Operacion cancelada\n");
-            exit(EXIT_FAILURE);
+        if( *(strControl+10)=='2' ){
+            flagTablas.hayTabla2 = 1;
+            //  STRINGS_FILE 
+            if( !fileExist(STRINGS_FILE) ){
+                printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+            //  T2_FILE1 
+            if( !fileExist(T2_FILE1) ){
+                printf("T2_FILE1 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+            //  T2_FILE2 
+            if( !fileExist(T2_FILE2) ){
+                printf("T2_FILE2 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+            //  T2_FILE3 
+            if( !fileExist(T2_FILE3) ){
+                printf("T2_FILE3 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
         }
     }else{
         printf("Error, campo tabla 2 no valido");    
@@ -276,51 +280,57 @@ int main(int argc, char *argv[]){
     // Hay tabla 3
     if( *(strControl+12)=='3' || *(strControl+12)=='_' ){
         printf("Campo Tabla 3 valido\n");
-        flagTablas.hayTabla3 = 1;
-        //  STRINGS_FILE 
-        if( !fileExist(STRINGS_FILE) ){
-            printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
-            printf("Operacion cancelada\n");
-            exit(EXIT_FAILURE);
-        }
-        //  T3_FILE1 
-        if( !fileExist(T3_FILE1) ){
-            printf("T3_FILE1 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
-            printf("Operacion cancelada\n");
-            exit(EXIT_FAILURE);
-        }
-        //  T3_FILE2 
-        if( !fileExist(T3_FILE2) ){
-            printf("T3_FILE2 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
-            printf("Operacion cancelada\n");
-            exit(EXIT_FAILURE);
-        }
-        //  T3_FILE3 
-        if( !fileExist(T3_FILE3) ){
-            printf("T3_FILE3 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
-            printf("Operacion cancelada\n");
-            exit(EXIT_FAILURE);
-        }
-        //  T3_huella
-        if( !fileExist(T3_HUELLA1) ){
-            printf("T3_FILE3 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
-            printf("Operacion cancelada\n");
-            exit(EXIT_FAILURE);
+        if( *(strControl+12)=='3'){ 
+            flagTablas.hayTabla3 = 1;
+            //  STRINGS_FILE 
+            if( !fileExist(STRINGS_FILE) ){
+                printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+            //  T3_FILE1 
+            if( !fileExist(T3_FILE1) ){
+                printf("T3_FILE1 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+            //  T3_FILE2 
+            if( !fileExist(T3_FILE2) ){
+                printf("T3_FILE2 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+            //  T3_FILE3 
+            if( !fileExist(T3_FILE3) ){
+                printf("T3_FILE3 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
+            //  T3_huella
+            if( !fileExist(T3_HUELLA1) ){
+                printf("T3_FILE3 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("Operacion cancelada\n");
+                exit(EXIT_FAILURE);
+            }
         }
     }else{
         printf("Error, campo tabla 3 no valido");    
     }
     // Hay tabla 4
     if( *(strControl+14)=='4' || *(strControl+14)=='_' ){
+        if( *(strControl+14)=='4' ){            
+            flagTablas.hayTabla4 = 1;
+        } 
         printf("Campo Tabla 4 valido\n");
-        flagTablas.hayTabla4 = 1;
     }else{
         printf("Error, campo tabla 4 no valido"); 
     }
     // Hay tabla 5
     if( *(strControl+16)=='5' || *(strControl+16)=='_' ){
         printf("Campo Tabla 5 valido\n");
-        flagTablas.hayTabla5 = 1;
+        if( *(strControl+16)=='5' ){            
+            flagTablas.hayTabla5 = 1;
+        } 
         //  STRINGS_FILE 
         if( !fileExist(STRINGS_FILE) ){
             printf("STRINGS_FILE No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
@@ -546,7 +556,7 @@ int main(int argc, char *argv[]){
     // END Authentication State
     
     //5. Transferencia de la informacion
-    char sshCommandTransferFilesArray[1000];
+    char sshCommandTransferFilesArray[4000];
     password = getpass("Enter Identifier Device linux password: ");
     printf("pass:[%s]\n",password);
     
