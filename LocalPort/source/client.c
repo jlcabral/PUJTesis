@@ -16,7 +16,7 @@
 #include "../include/rsa.h"
 #define TRUE            1
 #define FALSE           0
-#define AREYOUATHOME    TRUE
+#define AREYOUATHOME    FALSE
 #if AREYOUATHOME  
     #define PATH_APP        "/home/jlcabral/PUJTesis/LocalPort/"
 #else
@@ -32,7 +32,7 @@
 #define T3_FILE1        FILES_FOLDER "T3_F1_C15.jpg"
 #define T3_FILE2        FILES_FOLDER "T3_F1_C16.jpg"
 #define T3_FILE3        FILES_FOLDER "T3_F1_C17.jpg"
-#define T3_HUELLA1      FILES_FOLDER "T3_huella_I1 "
+#define T3_HUELLA1      FILES_FOLDER "T3_huella_I1"
 #define STRINGS_TO_TRANSFER  STRINGS_FILE " " 
 #define T2_TO_TRANSFER  T2_FILE1 " " T2_FILE2 " " T2_FILE3 " "
 #define T3_TO_TRANSFER  T3_FILE1 " " T3_FILE2 " " T3_FILE3 " " T3_HUELLA1 " "
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]){
     char strControl[17];
     printf("Enter the control string: "); fflush(stdout);
     //scanf("%17s",strControl);
-    strcpy(strControl, "110$_$T,_,_,3,_,_");
+    strcpy(strControl, "110$_$T,_,_,_,_,5");
     printf("The control string written is: [%s]\n",strControl);
         // 4.2 Caracterización del string ingresado (strControl)
     // 110
@@ -308,7 +308,7 @@ int main(int argc, char *argv[]){
             }
             //  T3_huella
             if( !fileExist(T3_HUELLA1) ){
-                printf("T3_FILE3 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
+                printf("T3_HUELLA1 No encontrado, revisar que se encuentre en [%s]\n",FILES_FOLDER);
                 printf("Operacion cancelada\n");
                 exit(EXIT_FAILURE);
             }
