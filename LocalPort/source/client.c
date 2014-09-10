@@ -16,7 +16,7 @@
 #include "../include/rsa.h"
 #define TRUE            1
 #define FALSE           0
-#define AREYOUATHOME    FALSE
+#define AREYOUATHOME    TRUE
 #if AREYOUATHOME  
     #define PATH_APP        "/home/jlcabral/PUJTesis/LocalPort/"
 #else
@@ -26,6 +26,7 @@
 #define FILES_FOLDER    PATH_APP "filesClient/"
 #define STRINGS_FILE    FILES_FOLDER "tablasString.txt"
 #define FRMWR_FILE      FILES_FOLDER "EMBEDDED"
+#define FRMWR_TO_TRANSFER   FRMWR_FILE " "
 #define T2_FILE1        FILES_FOLDER "T2_F1_C14.jpg"
 #define T2_FILE2        FILES_FOLDER "T2_F1_C15.jpg"
 #define T2_FILE3        FILES_FOLDER "T2_F1_C16.jpg"
@@ -33,28 +34,28 @@
 #define T3_FILE2        FILES_FOLDER "T3_F1_C16.jpg"
 #define T3_FILE3        FILES_FOLDER "T3_F1_C17.jpg"
 #define T3_HUELLA1      FILES_FOLDER "T3_huella_I1"
-#define STRINGS_TO_TRANSFER  STRINGS_FILE " " 
+#define STRINGS_TO_TRANSFER  STRINGS_FILE " "
 #define T2_TO_TRANSFER  T2_FILE1 " " T2_FILE2 " " T2_FILE3 " "
 #define T3_TO_TRANSFER  T3_FILE1 " " T3_FILE2 " " T3_FILE3 " " T3_HUELLA1 " "
-#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F1_C15.jpg " FILES_FOLDER "T4_F1_C16.jpg " FILES_FOLDER "T4_F1_C17.jpg " \
+#define T4_TO_TRANSFER_I1   FILES_FOLDER "T4_F1_C16.jpg " FILES_FOLDER "T4_F1_C17.jpg " \
                             FILES_FOLDER "T4_F1_C18.jpg " FILES_FOLDER "T4_huella_I1 " 
-#define T4_TO_TRANSFER_I2   FILES_FOLDER "T4_F2_C15.jpg " FILES_FOLDER "T4_F2_C16.jpg " FILES_FOLDER "T4_F2_C17.jpg " \
+#define T4_TO_TRANSFER_I2   FILES_FOLDER "T4_F2_C16.jpg " FILES_FOLDER "T4_F2_C17.jpg " \
                             FILES_FOLDER "T4_F2_C18.jpg " FILES_FOLDER "T4_huella_I2 "
-#define T4_TO_TRANSFER_I3   FILES_FOLDER "T4_F3_C15.jpg " FILES_FOLDER "T4_F3_C16.jpg " FILES_FOLDER "T4_F3_C17.jpg "\
+#define T4_TO_TRANSFER_I3   FILES_FOLDER "T4_F3_C16.jpg " FILES_FOLDER "T4_F3_C17.jpg "\
                             FILES_FOLDER "T4_F3_C18.jpg " FILES_FOLDER "T4_huella_I3 "
-#define T4_TO_TRANSFER_I4   FILES_FOLDER "T4_F4_C15.jpg " FILES_FOLDER "T4_F4_C16.jpg " FILES_FOLDER "T4_F4_C17.jpg "\
+#define T4_TO_TRANSFER_I4   FILES_FOLDER "T4_F4_C16.jpg " FILES_FOLDER "T4_F4_C17.jpg "\
                             FILES_FOLDER "T4_F4_C18.jpg " FILES_FOLDER "T4_huella_I4 "
-#define T4_TO_TRANSFER_I5   FILES_FOLDER "T4_F5_C15.jpg " FILES_FOLDER "T4_F5_C16.jpg " FILES_FOLDER "T4_F5_C17.jpg "\
+#define T4_TO_TRANSFER_I5   FILES_FOLDER "T4_F5_C16.jpg " FILES_FOLDER "T4_F5_C17.jpg "\
                             FILES_FOLDER "T4_F5_C18.jpg " FILES_FOLDER "T4_huella_I5 "
-#define T4_TO_TRANSFER_I6   FILES_FOLDER "T4_F6_C15.jpg " FILES_FOLDER "T4_F6_C16.jpg " FILES_FOLDER "T4_F6_C17.jpg "\
+#define T4_TO_TRANSFER_I6   FILES_FOLDER "T4_F6_C16.jpg " FILES_FOLDER "T4_F6_C17.jpg "\
                             FILES_FOLDER "T4_F6_C18.jpg " FILES_FOLDER "T4_huella_I6 "
-#define T4_TO_TRANSFER_I7   FILES_FOLDER "T4_F7_C15.jpg " FILES_FOLDER "T4_F7_C16.jpg " FILES_FOLDER "T4_F7_C17.jpg "\
+#define T4_TO_TRANSFER_I7   FILES_FOLDER "T4_F7_C16.jpg " FILES_FOLDER "T4_F7_C17.jpg "\
                             FILES_FOLDER "T4_F7_C18.jpg " FILES_FOLDER "T4_huella_I7 "
-#define T4_TO_TRANSFER_I8   FILES_FOLDER "T4_F8_C15.jpg " FILES_FOLDER "T4_F8_C16.jpg " FILES_FOLDER "T4_F8_C17.jpg "\
+#define T4_TO_TRANSFER_I8   FILES_FOLDER "T4_F8_C16.jpg " FILES_FOLDER "T4_F8_C17.jpg "\
                             FILES_FOLDER "T4_F8_C18.jpg " FILES_FOLDER "T4_huella_I8 "
-#define T4_TO_TRANSFER_I9   FILES_FOLDER "T4_F9_C15.jpg " FILES_FOLDER "T4_F9_C16.jpg " FILES_FOLDER "T4_F9_C17.jpg "\
+#define T4_TO_TRANSFER_I9   FILES_FOLDER "T4_F9_C16.jpg " FILES_FOLDER "T4_F9_C17.jpg "\
                             FILES_FOLDER "T4_F9_C18.jpg " FILES_FOLDER "T4_huella_I9 "
-#define T4_TO_TRANSFER_I10  FILES_FOLDER "T4_F10_C15.jpg " FILES_FOLDER "T4_F10_C16.jpg " FILES_FOLDER "T4_F10_C17.jpg "\
+#define T4_TO_TRANSFER_I10  FILES_FOLDER "T4_F10_C16.jpg " FILES_FOLDER "T4_F10_C17.jpg "\
                             FILES_FOLDER "T4_F10_C18.jpg " FILES_FOLDER "T4_huella_I10 "
     // Defines Encryption
 #define PATH_PRIVATE_KEY_CLIENT     "keys/privateClientKey.pem"
@@ -177,7 +178,7 @@ int main(int argc, char *argv[]){
     char strControl[17];
     printf("Enter the control string: "); fflush(stdout);
     //scanf("%17s",strControl);
-    strcpy(strControl, "110$_$T,_,_,_,_,5");
+    strcpy(strControl, "110$F$_,_,_,_,_,_");
     printf("The control string written is: [%s]\n",strControl);
         // 4.2 Caracterización del string ingresado (strControl)
     // 110
@@ -563,7 +564,12 @@ int main(int argc, char *argv[]){
     strcpy(sshCommandTransferFilesArray,"sshpass -p ");
     strcat(sshCommandTransferFilesArray,password);
     strcat(sshCommandTransferFilesArray," scp ");
-    if(flagTablas.hayTabla1 | flagTablas.hayTabla5){
+    // Firmware
+    if(flagTablas.hayFirmware){
+        strcat(sshCommandTransferFilesArray, FRMWR_TO_TRANSFER );
+    }
+    // Tables
+    if(flagTablas.hayTabla1 | flagTablas.hayTabla2 | flagTablas.hayTabla3 | flagTablas.hayTabla4 | flagTablas.hayTabla5){
         strcat(sshCommandTransferFilesArray,STRINGS_TO_TRANSFER);
     }
     if(flagTablas.hayTabla2){
