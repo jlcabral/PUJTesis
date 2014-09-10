@@ -178,7 +178,7 @@ int main(int argc, char *argv[]){
     char strControl[17];
     printf("Enter the control string: "); fflush(stdout);
     //scanf("%17s",strControl);
-    strcpy(strControl, "110$F$_,_,_,_,_,_");
+    strcpy(strControl, "110$F$T,1,2,3,4,5");
     printf("The control string written is: [%s]\n",strControl);
         // 4.2 Caracterización del string ingresado (strControl)
     // 110
